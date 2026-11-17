@@ -101,7 +101,7 @@ export function ListingForm() {
       <form onSubmit={submit} noValidate className="space-y-4 rounded-2xl bg-card p-4 sm:p-6">
         <Field label="Photo" id="photo" error={err("file")}>
           <div onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
-            onDrop={(e) => { e.preventDefault(); setDrag(false); setFile(e.dataTransfer.files?.[0] ?? null); }}
+            onDrop={(e) => { e.preventDefault(); setDrag(false); choose(e.dataTransfer.files?.[0] ?? null); }}
             className={cn("relative grid min-h-40 place-items-center rounded-xl border-2 border-dashed p-4 text-center", drag ? "border-primary bg-primary/5" : "border-input")}>
             {preview ? (
               <>
@@ -116,8 +116,8 @@ export function ListingForm() {
                 <span className="text-xs">JPG, PNG, WebP or GIF, up to 5 MB</span>
               </button>
             )}
-            <input ref={fileRef} id="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="sr-only"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+              <input ref={fileRef} id="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="sr-only"
+                onChange={(e) => { choose(e.target.files?.[0] ?? null); e.target.value = ""; }} />
           </div>
         </Field>
         <Field label="Title" id="title" error={err("title")}><Input id="title" value={f.title} onChange={set("title")} maxLength={255} /></Field>
