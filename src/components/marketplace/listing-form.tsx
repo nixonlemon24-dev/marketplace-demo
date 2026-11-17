@@ -45,13 +45,17 @@ export function ListingForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const previewRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (!file) { setPreview(null); return; }
-    const url = URL.createObjectURL(file);
+
+  function choose(next: File | null) {
+    if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+    const url = next ? URL.createObjectURL(next) : null;
+    previewRef.current = url;
+    setFile(next);
     setPreview(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+  }
+  useEffect(() => () => { if (previewRef.current) URL.revokeObjectURL(previewRef.current); }, []);
 
   const errors = validate(f, file);
   const err = (k: keyof typeof errors) => (submitted ? errors[k] : undefined);
