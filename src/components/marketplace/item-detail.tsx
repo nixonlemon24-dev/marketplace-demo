@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -80,7 +80,9 @@ export function ItemDetail({ id }: { id: string }) {
             {item.description && <p className="whitespace-pre-line text-sm">{item.description}</p>}
             <Separator />
             <div className="flex items-center gap-3">
-              <Avatar><AvatarFallback>{item.seller_email[0]}</AvatarFallback></Avatar>
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold uppercase text-primary-foreground">
+                {item.seller_email[0]}
+              </span>
               <div className="min-w-0">
                 <p className="text-sm font-semibold">Seller</p>
                 <a href={`mailto:${item.seller_email}`} className="block truncate text-sm text-primary hover:underline">{item.seller_email}</a>
