@@ -7,34 +7,35 @@ import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import type { Listing } from "@/lib/supabase";
 
-export function ItemGrid({ category, title = "Today’s picks" }: { category?: string; title?: string }) {
+export function ItemGrid({ category, title = "Today's picks" }: { category?: string; title?: string }) {
   const q = useSearchParams().get("q") ?? "";
-  const [items, setItems] = useState<Listing[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const key = `${category ?? ""}|${q}`;
+  const [result, setResult] = useState<{ key: string; items: Listing[]; error: string | null } | null>(null);
+  // a result for a different category or search means the current one is still loading
+  const current = result?.key === key ? result : null;
+  const loading = !current;
+  const items = current?.items ?? [];
+  const error = current?.error ?? null;
 
   useEffect(() => {
     const ctrl = new AbortController();
-    setLoading(true);
-    setError(null);
     const params = new URLSearchParams();
     if (category) params.set("category", category);
     if (q) params.set("q", q);
     fetch(`/api/listings?${params}`, { signal: ctrl.signal })
       .then(async (r) => {
         const j = await r.json();
-        if (!r.ok) throw new Error(j.error ?? "Couldn’t load listings.");
-        setItems(j.listings);
+        if (!r.ok) throw new Error(j.error ?? "Couldn't load listings.");
+        setResult({ key, items: j.listings, error: null });
       })
-      .catch((e) => { if (e.name !== "AbortError") setError(e.message); })
-      .finally(() => { if (!ctrl.signal.aborted) setLoading(false); });
+      .catch((e) => { if (e.name !== "AbortError") setResult({ key, items: [], error: e.message }); });
     return () => ctrl.abort();
-  }, [category, q]);
+  }, [category, q, key]);
 
   return (
     <section>
-      <h1 className="text-2xl font-extrabold">{q ? `Results for “${q}”` : title}</h1>
-      {loading && <p className="mt-10 flex items-center gap-2 text-muted-foreground"><Loader2 className="size-4 animate-spin" />Loading listings…</p>}
+      <h1 className="text-2xl font-extrabold">{q ? `Results for "${q}"` : title}</h1>
+      {loading && <p className="mt-10 flex items-center gap-2 text-muted-foreground"><Loader2 className="size-4 animate-spin" />Loading listings...</p>}
       {error && <p role="alert" className="mt-10 text-destructive">{error}</p>}
       {!loading && !error && items.length === 0 && (
         <div className="mt-10 flex flex-col items-start gap-3 text-muted-foreground">

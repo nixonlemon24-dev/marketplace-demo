@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Car, Home, Layers, Package } from "lucide-react";
 import { ListShell } from "@/components/layout/list-shell";
 import { cn } from "@/lib/utils";
+
 
 const TYPES = [
   { Icon: Package, title: "Item for sale", desc: "Sell something you own, with a photo and a price.", href: "/create/item" },
@@ -12,7 +14,8 @@ const TYPES = [
 
 export default function CreatePage() {
   return (
-    <ListShell>
+    <Suspense>
+      <ListShell>
       <div className="mx-auto max-w-5xl sm:p-4">
         <h1 className="text-3xl font-extrabold">Choose listing type</h1>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -35,6 +38,7 @@ export default function CreatePage() {
           })}
         </ul>
       </div>
-    </ListShell>
+     </ListShell>
+    </Suspense>
   );
 }
