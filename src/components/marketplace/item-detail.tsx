@@ -11,8 +11,10 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { formatPrice } from "@/lib/utils";
 import type { Listing } from "@/lib/supabase";
+import { BuyButton } from "@/components/marketplace/buy-button";
+import { CheckoutBanner } from "@/components/marketplace/checkout-banner";
 
-export function ItemDetail({ id }: { id: string }) {
+export function ItemDetail({ id, checkout, sessionId }: { id: string; checkout?: string; sessionId?: string }) {
   const [item, setItem] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,6 +68,7 @@ export function ItemDetail({ id }: { id: string }) {
   return (
     <div className="max-w-5xl">
       {back}
+       <CheckoutBanner listingId={item.id} checkout={checkout} sessionId={sessionId} />  
       <div className="grid gap-6 lg:grid-cols-[1fr_22rem]">
         <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-black/10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -78,6 +81,7 @@ export function ItemDetail({ id }: { id: string }) {
             <p className="text-2xl">{formatPrice(item.price)}</p>
             <p className="text-sm text-muted-foreground">{item.location} · Listed {new Date(item.created_at).toLocaleDateString()}</p>
             {item.description && <p className="whitespace-pre-line text-sm">{item.description}</p>}
+            <BuyButton listingId={item.id} price={item.price} /> 
             <Separator />
             <div className="flex items-center gap-3">
               <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold uppercase text-primary-foreground">
